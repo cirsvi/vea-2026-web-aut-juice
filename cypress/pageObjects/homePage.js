@@ -56,8 +56,21 @@ export class HomePage extends BasePage {
   static get productCardReviewInputField(){
     return cy.get('[aria-label="Text field to review a product"]');
   }
+
   static get productCardReviewSubmitButton(){
     return cy.get('#submitButton');
+  }
+
+  static get amountsOfItemsPerPageDropdown(){
+     return cy.get('.mat-mdc-select');
+  }
+
+  static get itemsPerPageDropdown(){
+     return cy.get('.mat-mdc-paginator-touch-target');
+  }
+
+  static get itemsPerPageAmountOptions(){
+     return cy.get('.mat-mdc-option');
   }
 
   
