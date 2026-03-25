@@ -1,4 +1,6 @@
 import { HomePage } from '../pageObjects/HomePage';
+import { LoginPage } from '../pageObjects/loginPage';
+import { RegistrationPage } from '../pageObjects/registrationPage';
 
 describe('Juice-shop scenarios', () => {
   context('Without auto login', () => {
@@ -10,31 +12,56 @@ describe('Juice-shop scenarios', () => {
 
     it('Login', () => {
       // Click Account button
+      HomePage.accountButton.click();
       // Click Login button
+      HomePage.loginButton.click()
       // Set email value to "demo"
+      LoginPage.emailField.type('demo');
       // Set password value to "demo"
+      LoginPage.passwordField.type('demo');
       // Click Log in
+      LoginPage.loginButton.click();
       // Click Account button
+      HomePage.accountButton.click()
       // Validate that "demo" account name appears in the menu section
+      HomePage.userProfileButton.should('contain.text', 'demo');
     });
 
     it('Registration', () => {
       // Click Account button
+      HomePage.accountButton.click();
       // Login button
+      HomePage.loginButton.click()
       // Click "Not yet a customer?"
+      LoginPage.notYetCustomerLink.click()
       // Find - how to generate random number in JS
+      const randomNum = Math.floor(Math.random() * 9000) + 1000;
+      const email = `email_${randomNum}@ebox.com`;
       // Use that number to genarate unique email address, e.g.: email_7584@ebox.com
       // Save that email address to some variable
+      RegistrationPage.emailField.type(email);
       // Fill in password field and repeat password field with same password
+      const password = 'password123'
+      RegistrationPage.passwordField.type(password);
+      RegistrationPage.passwordRepeatField.type(password);
       // Click on Security Question menu
+      RegistrationPage.securityQuestionDropdown.click();
       // Select  "Name of your favorite pet?"
+      RegistrationPage.securityQuestionOptions.contains('Name of your favorite pet?').click();
       // Fill in answer
+      RegistrationPage.securityAnswer.type('Tomas');
       // Click Register button
+      RegistrationPage.registerButton.click();
       // Set email value to previously created email
+      LoginPage.emailField.type(email);
       // Set password value to previously used password value
+      LoginPage.passwordField.type(password);
       // Click login button
+      LoginPage.loginButton.click();
       // Click Account button
+      HomePage.accountButton.click()
       // Validate that account name (with previously created email address) appears in the menu section
+      HomePage.userProfileButton.should('contain.text', email);
     });
   });
 
@@ -46,35 +73,62 @@ describe('Juice-shop scenarios', () => {
 
     it('Search and validate Lemon', () => {
       // Click on search icon
+      HomePage.searchIcon.click();
       // Search for Lemon
+      HomePage.searchInputFiled.type('Lemon{enter}');
       // Select a product card - Lemon Juice (500ml)
+      HomePage.productNames.contains('Lemon Juice (500ml)').click();
       // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.productCard.should('contain.text', "Sour but full of vitamins.")
     });
 
-    // Create scenario - Search 500ml and validate Lemon, while having multiple cards
-    // Click on search icon
-    // Search for 500ml
-    // Select a product card - Lemon Juice (500ml)
-    // Validate that the card (should) contains "Sour but full of vitamins."
+    it('Search 500ml and validate Lemon', () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for 500ml
+      HomePage.searchInputFiled.type('500ml{enter}');
+      // Select a product card - Lemon Juice (500ml)
+      HomePage.productNames.contains('Lemon Juice (500ml)').click();
+      // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.productCard.should('contain.text', "Sour but full of vitamins.")
+    });  
 
-    // Create scenario - Search 500ml and validate cards
-    // Click on search icon
-    // Search for 500ml
-    // Select a product card - Eggfruit Juice (500ml)
-    // Validate that the card (should) contains "Now with even more exotic flavour."
-    // Close the card
-    // Select a product card - Lemon Juice (500ml)
-    // Validate that the card (should) contains "Sour but full of vitamins."
-    // Close the card
-    // Select a product card - Strawberry Juice (500ml)
-    // Validate that the card (should) contains "Sweet & tasty!"
+    it('Search 500ml and validate cards', () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for 500ml
+      HomePage.searchInputFiled.type('500ml{enter}');
+      // Select a product card - Eggfruit Juice (500ml)
+      HomePage.productNames.contains('Eggfruit Juice (500ml)').click();
+      // Validate that the card (should) contains "Now with even more exotic flavour."
+      HomePage.productCard.should('contain.text', "Now with even more exotic flavour.")
+      // Close the card
+      HomePage.productCloseCardButton.click()
+      // Select a product card - Lemon Juice (500ml)
+      HomePage.productNames.contains('Lemon Juice (500ml)').click();
+      // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.productCard.should('contain.text', "Sour but full of vitamins.")
+      // Close the card
+      HomePage.productCloseCardButton.click()
+      // Select a product card - Strawberry Juice (500ml)
+      HomePage.productNames.contains('Strawberry Juice (500ml)').click();
+      // Validate that the card (should) contains "Sweet & tasty!"
+      HomePage.productCard.should('contain.text', "Sweet & tasty!")
+    })
 
-    // Create scenario - Read a review
-    // Click on search icon
-    // Search for King
-    // Select a product card - OWASP Juice Shop "King of the Hill" Facemask
-    // Click expand reviews button/icon (wait for reviews to appear)
-    // Validate review - K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!
+    it.only('Read a review', () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for King
+      HomePage.searchInputFiled.type('King{enter}');
+      // Select a product card - OWASP Juice Shop "King of the Hill" Facemask
+      HomePage.productNames.contains('OWASP Juice Shop "King of the Hill" Facemask').click();
+      // Click expand reviews button/icon (wait for reviews to appear)
+      HomePage.productCardReviewDropdown.click();
+      // Validate review - K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!
+      HomePage.productCardReviewRow.should('contain.text', 'K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!')
+    })
+    
 
     // Create scenario - Add a review
     // Click on search icon
