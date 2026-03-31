@@ -1,4 +1,4 @@
-import { HomePage } from '../pageObjects/HomePage';
+import { HomePage } from '../pageObjects/homePage';
 import { LoginPage } from '../pageObjects/loginPage';
 import { RegistrationPage } from '../pageObjects/registrationPage';
 import { BasketPage } from '../pageObjects/basketPage';
@@ -7,6 +7,9 @@ import { DeliveryMethodPage } from '../pageObjects/deliveryMethodPage';
 import { PaymentOptionsPage } from '../pageObjects/paymentOptionsPage';
 import { OrderSummaryPage } from '../pageObjects/orderSummaryPage';
 import { OrderCompletionPage } from '../pageObjects/orderCompletionPage';
+import { SavedAddressPage } from '../pageObjects/savedAddressesPage';
+import { CreateAddressPage } from '../pageObjects/createAddressPage';
+import { SavedPaymentMethodsPage } from '../pageObjects/savedPaymentMethodsPage';
 
 
 describe('Juice-shop scenarios', () => {
@@ -169,7 +172,7 @@ describe('Juice-shop scenarios', () => {
       HomePage.amountsOfItemsPerPageDropdown.should('contain.text', '36');
     })
     
-    it.only('Buy Girlie T-shirt', () => {
+    it('Buy Girlie T-shirt', () => {
       // Click on search icon
       HomePage.searchIcon.click();
       // Search for Girlie
@@ -204,29 +207,76 @@ describe('Juice-shop scenarios', () => {
       OrderCompletionPage.orderCompletionHeader.should('contain.text', 'Thank you for your purchase!')
     })
     
+    it('Add address', () => {
+      const country = 'Latvia';
+      const uniqueName = `Demo ${Date.now()}`; // Date.now() returns the timestamp, in millisecons, of the current time
+      const mobileNumber = '20000000';
+      const zipCode = 'LV0000';
+      const addressLine = 'Riga, Random Street 14';
+      const city = 'Riga';
+      const state = 'Test';
+      const fullAddress = `${addressLine}, ${city}, ${state}, ${zipCode}`;
 
-    // Create scenario - Add address
-    // Click on Account
-    // Click on Orders & Payment
-    // Click on My saved addresses
-    // Create page object - SavedAddressesPage
-    // Click on Add New Address
-    // Create page object - CreateAddressPage
-    // Fill in the necessary information
-    // Click Submit button
-    // Validate that previously added address is visible
+      // Click on Account
+      HomePage.accountButton.click();
+      // Click on Orders & Payment
+      HomePage.ordersAndPaymentButton.click()
+      // Click on My saved addresses
+      HomePage.savedAddressButton.click();
+      // Create page object - SavedAddressesPage
+      // Click on Add New Address
+      SavedAddressPage.addNewAddressButton.click();
+      // Create page object - CreateAddressPage
+      // Fill in the necessary information
+      CreateAddressPage.countryInputFiled.type(country);
+      CreateAddressPage.nameInputFiled.type(uniqueName);
+      CreateAddressPage.mobileNumberInputField.type(mobileNumber);
+      CreateAddressPage.zipCodeInputField.type(zipCode);
+      CreateAddressPage.addressInputField.type(addressLine);
+      CreateAddressPage.cityInputField.type(city);
+      CreateAddressPage.stateInputField.type(state);
+      // Click Submit button
+      CreateAddressPage.submitButton.click();
+      // Validate that previously added address is visible
+      SavedAddressPage.addressRow
+        .should('contain', uniqueName)
+        .and('contain', fullAddress)
+        .and('contain', country);
+    })
+    
+    it('Add payment option', () => {
+      const uniqueName = `Demo ${Date.now()}`;
+      const cardNumber = '2342351241241242';
+      const expiryMonth = '7';
+      const expiryYear = '2090';
 
-    // Create scenario - Add payment option
-    // Click on Account
-    // Click on Orders & Payment
-    // Click on My payment options
-    // Create page object - SavedPaymentMethodsPage
-    // Click Add new card
-    // Fill in Name
-    // Fill in Card Number
-    // Set expiry month to 7
-    // Set expiry year to 2090
-    // Click Submit button
-    // Validate that the card shows up in the list
+      const last4Digits = cardNumber.slice(-4);
+      const maskedCard = `************${last4Digits}`;
+
+      // Click on Account
+      HomePage.accountButton.click();
+      // Click on Orders & Payment
+      HomePage.ordersAndPaymentButton.click()
+      // Click on My payment options
+      HomePage.savedPaymentButton.click();
+      // Create page object - SavedPaymentMethodsPage
+      // Click Add new card
+      SavedPaymentMethodsPage.addCardDropdown.click();
+      // Fill in Name
+      SavedPaymentMethodsPage.nameInputField.type(uniqueName);
+      // Fill in Card Number
+      SavedPaymentMethodsPage.cardInputField.type(cardNumber);
+      // Set expiry month to 7
+      SavedPaymentMethodsPage.expiryMonthSelect.select(expiryMonth);
+      // Set expiry year to 2090
+      SavedPaymentMethodsPage.expiryYearSelect.select(expiryYear);
+      // Click Submit button
+      SavedPaymentMethodsPage.submitButton.click();
+      // Validate that the card shows up in the list
+      SavedPaymentMethodsPage.cardDetailRow
+        .should('contain', maskedCard)
+        .and('contain', uniqueName)
+        .and('contain', `${expiryMonth}/${expiryYear}`);
+    })
   });
 });
